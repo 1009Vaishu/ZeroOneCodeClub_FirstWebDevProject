@@ -1,0 +1,146 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyOmtVULweEm3J1vscdaMyPP",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/1009Vaishu/ZeroOneCodeClub_FirstWebDevProject/blob/main/exp-5\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "1Hn3sE0F6wLr",
+        "outputId": "3a54b414-58eb-47b7-f237-3a649c530e8c"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Path found: [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (4, 1), (4, 2), (4, 3), (4, 4), (5, 4), (6, 4), (6, 5), (6, 6), (7, 6), (8, 6), (9, 6), (9, 7), (9, 8), (9, 9)]\n",
+            "Number of Steps: 19\n",
+            "Number of iterations: 30\n",
+            "R . . . . X . . . . \n",
+            "R X X X . X . X X . \n",
+            "R X . . . . . X . . \n",
+            "R X . X X X . X . . \n",
+            "R R R R R X . . . . \n",
+            ". X X X R X . X X . \n",
+            ". X . . R R R X . . \n",
+            ". . . X X X R . . . \n",
+            ". X . . . X R X . . \n",
+            ". . . . . . R R R R \n"
+          ]
+        }
+      ],
+      "source": [
+        "import random\n",
+        "\n",
+        "# Define the grid size (n x m)\n",
+        "n = 10\n",
+        "m = 10\n",
+        "\n",
+        "# Define the grid with obstacles (1 represents an obstacle, 0 represents free space)\n",
+        "grid = [\n",
+        "    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],\n",
+        "    [0, 1, 1, 1, 0, 1, 0, 1, 1, 0],\n",
+        "    [0, 1, 0, 0, 0, 0, 0, 1, 0, 0],\n",
+        "    [0, 1, 0, 1, 1, 1, 0, 1, 0, 0],\n",
+        "    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],\n",
+        "    [0, 1, 1, 1, 0, 1, 0, 1, 1, 0],\n",
+        "    [0, 1, 0, 0, 0, 0, 0, 1, 0, 0],\n",
+        "    [0, 0, 0, 1, 1, 1, 0, 0, 0, 0],\n",
+        "    [0, 1, 0, 0, 0, 1, 0, 1, 0, 0],\n",
+        "    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]\n",
+        "]\n",
+        "\n",
+        "# Define the start and goal positions\n",
+        "start_position = (0, 0)\n",
+        "goal_position = (n-1, m-1)\n",
+        "\n",
+        "def get_neighbors(position):\n",
+        "    \"\"\"Get all valid neighboring positions (up, down, left, right)\"\"\"\n",
+        "    x, y = position\n",
+        "    neighbors = []\n",
+        "    if x > 0 and grid[x - 1][y] == 0: neighbors.append((x - 1, y))  # Up\n",
+        "    if x < n - 1 and grid[x + 1][y] == 0: neighbors.append((x + 1, y))  # Down\n",
+        "    if y > 0 and grid[x][y - 1] == 0: neighbors.append((x, y - 1))  # Left\n",
+        "    if y < m - 1 and grid[x][y + 1] == 0: neighbors.append((x, y + 1))  # Right\n",
+        "    return neighbors\n",
+        "\n",
+        "def objective_function(position):\n",
+        "    \"\"\"Calculate the negative Manhattan distance to the goal\"\"\"\n",
+        "    return -(abs(position[0] - goal_position[0]) + abs(position[1] - goal_position[1]))\n",
+        "\n",
+        "def stochastic_hill_climbing(start_position, max_iterations=1000):\n",
+        "    \"\"\"Perform stochastic hill climbing to find a path to the goal\"\"\"\n",
+        "    current_position = start_position\n",
+        "    current_value = objective_function(current_position)\n",
+        "    path = [current_position]\n",
+        "\n",
+        "    for iteration in range(max_iterations):\n",
+        "        neighbors = get_neighbors(current_position)\n",
+        "        if not neighbors:  # No valid moves available (dead end)\n",
+        "            break\n",
+        "\n",
+        "        next_position = random.choice(neighbors)\n",
+        "        next_value = objective_function(next_position)\n",
+        "\n",
+        "        if next_value > current_value:\n",
+        "            current_position = next_position\n",
+        "            current_value = next_value\n",
+        "            path.append(current_position)\n",
+        "\n",
+        "        # If we've reached the goal, exit early\n",
+        "        if current_position == goal_position:\n",
+        "            break\n",
+        "\n",
+        "    return path, iteration + 1\n",
+        "\n",
+        "# Run the stochastic hill climbing algorithm\n",
+        "path, iterations = stochastic_hill_climbing(start_position)\n",
+        "\n",
+        "# Output the result\n",
+        "print(f\"Path found: {path}\")\n",
+        "print(f\"Number of Steps: {len(path)}\")\n",
+        "print(f\"Number of iterations: {iterations}\")\n",
+        "\n",
+        "# Print the grid with the path\n",
+        "for i in range(n):\n",
+        "    row = ''\n",
+        "    for j in range(m):\n",
+        "        if (i, j) in path:\n",
+        "            row += 'R '  # Robot path\n",
+        "        elif grid[i][j] == 1:\n",
+        "            row += 'X '  # Obstacle\n",
+        "        else:\n",
+        "            row += '. '  # Free space\n",
+        "    print(row)"
+      ]
+    }
+  ]
+}
