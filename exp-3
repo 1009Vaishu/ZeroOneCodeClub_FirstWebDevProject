@@ -1,0 +1,99 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyMrr1dQGwxzt2GuHFMkAiO4",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/1009Vaishu/ZeroOneCodeClub_FirstWebDevProject/blob/main/exp-3\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "9NP18MkJ5peq",
+        "outputId": "dcac6096-96b1-4643-c489-20c6443b5db0"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Path from A to F: ['A', 'C', 'F']\n"
+          ]
+        }
+      ],
+      "source": [
+        "from collections import deque\n",
+        "\n",
+        "def bfs(graph, start, goal):\n",
+        "    # Initialize the queue with the start node\n",
+        "    queue = deque([start])\n",
+        "    # Dictionary to keep track of visited nodes\n",
+        "    visited = {start: None}\n",
+        "\n",
+        "    while queue:\n",
+        "        # Dequeue a node\n",
+        "        current = queue.popleft()\n",
+        "\n",
+        "        # Check if we've reached the goal\n",
+        "        if current == goal:\n",
+        "            break\n",
+        "\n",
+        "        # Enqueue all adjacent nodes that haven't been visited\n",
+        "        for neighbor in graph[current]:\n",
+        "            if neighbor not in visited:\n",
+        "                queue.append(neighbor)\n",
+        "                visited[neighbor] = current\n",
+        "\n",
+        "    # Reconstruct the path from goal to start using the visited dictionary\n",
+        "    path = []\n",
+        "    vertex = goal\n",
+        "    while vertex is not None:\n",
+        "        path.append(vertex)\n",
+        "        vertex = visited[vertex]\n",
+        "    path.reverse()  # Reverse the path to get it from start to goal\n",
+        "\n",
+        "    return path\n",
+        "\n",
+        "# Example graph represented as an adjacency list\n",
+        "graph = {\n",
+        "    'A': ['B', 'C'],\n",
+        "    'B': ['A', 'D', 'E'],\n",
+        "    'C': ['A', 'F'],\n",
+        "    'D': ['B'],\n",
+        "    'E': ['B', 'F'],\n",
+        "    'F': ['C', 'E']\n",
+        "}\n",
+        "\n",
+        "# Example usage\n",
+        "start_node = 'A'\n",
+        "goal_node = 'F'\n",
+        "path = bfs(graph, start_node, goal_node)\n",
+        "print(f\"Path from {start_node} to {goal_node}: {path}\")"
+      ]
+    }
+  ]
+}
