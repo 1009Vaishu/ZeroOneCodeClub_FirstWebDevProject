@@ -1,0 +1,122 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyN5D1bz6BNIKOJJUaHHgF8b",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/1009Vaishu/ZeroOneCodeClub_FirstWebDevProject/blob/main/exp%202\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "BelGK7DI4k3x",
+        "outputId": "9a9cad2d-5498-4942-ae85-e5ff3eb484d0"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Agent Location: (0, 0), Action: Suck\n",
+            "Clean Clean\n",
+            "\n",
+            "Agent Location: (0, 1), Action: Move Right\n",
+            "Clean Clean\n",
+            "\n"
+          ]
+        }
+      ],
+      "source": [
+        "class SimpleReflexAgent:\n",
+        "    def __init__(self):\n",
+        "        pass\n",
+        "\n",
+        "    def get_action(self, percept):\n",
+        "        if percept == \"Dirty\":\n",
+        "            return \"Suck\"\n",
+        "        else:\n",
+        "            return \"Move\"\n",
+        "\n",
+        "class Environment:\n",
+        "    def __init__(self, grid):\n",
+        "        self.grid = grid\n",
+        "        self.agent_location = (0, 0)  # Starting at top-left corner\n",
+        "\n",
+        "    def get_location_status(self):\n",
+        "        x, y = self.agent_location\n",
+        "        return self.grid[x][y]\n",
+        "\n",
+        "    def update(self, action):\n",
+        "        if action == \"Suck\":\n",
+        "            x, y = self.agent_location\n",
+        "            self.grid[x][y] = \"Clean\"\n",
+        "        else:\n",
+        "            self.move_agent(action)\n",
+        "\n",
+        "    def move_agent(self, direction):\n",
+        "        x, y = self.agent_location\n",
+        "        if direction == \"Move Left\" and y > 0:\n",
+        "            self.agent_location = (x, y - 1)\n",
+        "        elif direction == \"Move Right\" and y < len(self.grid[0]) - 1:\n",
+        "            self.agent_location = (x, y + 1)\n",
+        "        elif direction == \"Move Up\" and x > 0:\n",
+        "            self.agent_location = (x - 1, y)\n",
+        "        elif direction == \"Move Down\" and x < len(self.grid) - 1:\n",
+        "            self.agent_location = (x + 1, y)\n",
+        "\n",
+        "    def print_grid(self):\n",
+        "        for row in self.grid:\n",
+        "            print(\" \".join(row))\n",
+        "        print()\n",
+        "\n",
+        "def main():\n",
+        "    grid = [\n",
+        "        [\"Dirty\", \"Clean\"],\n",
+        "           ]\n",
+        "    environment = Environment(grid)\n",
+        "    agent = SimpleReflexAgent()\n",
+        "\n",
+        "    # Define movements\n",
+        "    movements = [\"Move Right\", \"Move Down\", \"Move Left\", \"Move Up\"]\n",
+        "    move_index = 0\n",
+        "\n",
+        "    for _ in range(len(grid) * len(grid[0])):\n",
+        "        percept = environment.get_location_status()\n",
+        "        action = agent.get_action(percept)\n",
+        "        if action == \"Move\":\n",
+        "            action = movements[move_index]\n",
+        "            move_index = (move_index + 1) % len(movements)\n",
+        "        environment.update(action)\n",
+        "        print(f\"Agent Location: {environment.agent_location}, Action: {action}\")\n",
+        "        environment.print_grid()\n",
+        "\n",
+        "if __name__ == \"__main__\":\n",
+        "    main()"
+      ]
+    }
+  ]
+}
